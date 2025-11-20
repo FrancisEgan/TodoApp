@@ -1,65 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { todoService } from '../services/todoService';
+import { useTodos } from '../hooks/useTodos';
 import { TodoItem } from '../components/TodoItem';
 import { AddTodo } from '../components/AddTodo';
-import type { Todo } from '../types/todo';
 import './TodoDashboard.scss';
 
 export function TodoDashboard() {
   const { user, logout } = useAuth();
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { todos, isLoading, error, createTodo, updateTodo, deleteTodo } = useTodos();
   const [showAddForm, setShowAddForm] = useState(false);
 
-  useEffect(() => {
-    loadTodos();
-  }, []);
-
-  const loadTodos = async () => {
-    try {
-      setIsLoading(true);
-      const data = await todoService.getAll();
-      setTodos(data);
-      setError('');
-    } catch (err) {
-      setError('Failed to load todos');
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleAddTodo = async (title: string) => {
-    try {
-      const newTodo = await todoService.create({ title });
-      setTodos([...todos, newTodo]);
-      setShowAddForm(false);
-    } catch (err) {
-      console.error('Failed to add todo:', err);
-      throw err;
-    }
+    await createTodo({ title });
+    setShowAddForm(false);
   };
 
   const handleUpdateTodo = async (id: number, title: string, isComplete: boolean) => {
-    try {
-      const updated = await todoService.update(id, { title, isComplete });
-      setTodos(todos.map((t) => (t.id === id ? updated : t)));
-    } catch (err) {
-      console.error('Failed to update todo:', err);
-      // Revert on error
-      await loadTodos();
-    }
+    await updateTodo(id, { title, isComplete });
   };
 
   const handleDeleteTodo = async (id: number) => {
-    try {
-      await todoService.delete(id);
-      setTodos(todos.filter((t) => t.id !== id));
-    } catch (err) {
-      console.error('Failed to delete todo:', err);
-    }
+    await deleteTodo(id);
   };
 
   return (
@@ -85,7 +46,7 @@ export function TodoDashboard() {
           </div>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="error-message">Failed to load todos</div>}
 
         <div className="todos-container">
           {isLoading ? (
