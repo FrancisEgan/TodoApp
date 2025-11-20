@@ -1,0 +1,71 @@
+.todo-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.todo-item:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.todo-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #4a90e2;
+}
+
+.todo-title {
+    flex: 1;
+    cursor: pointer;
+    user-select: none;
+    color: #333;
+    font-size: 1rem;
+    transition: color 0.2s;
+}
+
+.todo-title:hover {
+    color: #4a90e2;
+}
+
+.todo-item.completed .todo-title {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.todo-input-edit {
+    flex: 1;
+    padding: 0.5rem;
+    border: 2px solid #4a90e2;
+    border-radius: 4px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.todo-delete {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: #999;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.todo-delete:hover {
+    background-color: #fee;
+    color: #dc3545;
+}

@@ -54,9 +54,11 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
    ```
 
 3. Access the application:
-   - Frontend: `https://localhost:5173`
+   - Frontend: `http://localhost:5173`
    - API Documentation (Scalar UI): `https://localhost:<port>/scalar/v1`
    - OpenAPI JSON: `https://localhost:<port>/openapi/v1.json`
+
+**Note:** The frontend runs on HTTP for easier development (HMR works better), while the API runs on HTTPS. The CORS configuration allows this mixed setup.
 
 ## API Endpoints
 
