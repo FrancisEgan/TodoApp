@@ -50,7 +50,21 @@ export const authService = {
 
         if (!response.ok) {
             const error = await response.text();
-            throw new Error(error || 'Verification failed');
+
+            // Parse the error response and provide a user-friendly message
+            try {
+                const errorData = JSON.parse(error);
+                if (errorData.message?.includes('Invalid or expired verification token')) {
+                    throw new Error('Invalid or expired token. Please verify the link you have is valid, or try the sign up process again.');
+                }
+                throw new Error(errorData.message || 'Verification failed');
+            } catch {
+                // If JSON parsing fails, check the raw text
+                if (error.includes('Invalid or expired verification token')) {
+                    throw new Error('Invalid or expired token. Please verify the link you have is valid, or try the sign up process again.');
+                }
+                throw new Error(error || 'Verification failed');
+            }
         }
 
         const data = await response.json();
