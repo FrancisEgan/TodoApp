@@ -27,7 +27,7 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
 ### Prerequisites
 
 - .NET 10.0 SDK or later
-- Node.js 18+ (for the frontend)
+- Node.js 25 or later
 
 ### Setup
 
@@ -37,30 +37,30 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
    npm install
    ```
 
-### Running the Application
-
-1. Trust the development certificate (first time only):
+2. Trust the development certificate:
    ```bash
    dotnet dev-certs https --trust
    ```
 
-2. Start the API:
+### Running the Application
+
+1. Start the API:
    ```bash
    cd TodoApi
    dotnet run
    ```
 
-3. Start the frontend:
+2. Start the frontend:
    ```bash
    cd TodoSpa
    npm run dev
    ```
 
-4. Access the application:
+3. Access the application:
    - Frontend: `http://localhost:5173`
    - API Documentation (Scalar UI): `https://localhost:7275/scalar`
 
-5. Creating a user:
+4. Creating a user:
    - When you enter an email address in the signup, it will instruct you to check the API console for the verification link. Emailing is not implemented in this app, so you will find the link that would normally be found in your email in the console where you are running the API.
 
 **Note:** The frontend runs on HTTP for easier development (HMR works better), while the API runs on HTTPS. The CORS configuration allows this mixed setup.
