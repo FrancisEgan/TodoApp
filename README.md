@@ -68,10 +68,10 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
 ## API Endpoints
 
 ### Authentication
-- `POST /auth/signup` - Create a new user account (sends verification email)
+- `POST /auth/signup` - Create a new user account (prints token in console)
 - `POST /auth/verify` - Verify account with token and set name/password
 - `POST /auth/login` - Login and receive JWT token
-- `POST /auth/resend-verification` - Resend verification email
+- `POST /auth/resend-verification` - Resend verification email (prints token in console)
 
 ### Todos (Requires Authentication)
 - `GET /todos` - Get all todos for the authenticated user
