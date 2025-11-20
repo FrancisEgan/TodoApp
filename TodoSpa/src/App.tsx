@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './hooks/useAuth';
 import { LandingPage } from './pages/LandingPage';
+import { VerifyPage } from './pages/VerifyPage';
 import { TodoDashboard } from './pages/TodoDashboard';
 import './App.css';
 
@@ -23,6 +24,14 @@ function AppRoutes() {
         element={
           <PublicRoute>
             <LandingPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/verify"
+        element={
+          <PublicRoute>
+            <VerifyPage />
           </PublicRoute>
         }
       />

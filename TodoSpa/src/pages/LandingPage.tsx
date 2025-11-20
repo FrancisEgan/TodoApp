@@ -1,23 +1,12 @@
 import { useState } from 'react';
 import { Login } from '../components/Login';
 import { Signup } from '../components/Signup';
-import { SetPassword } from '../components/SetPassword';
 import './LandingPage.css';
 
-type View = 'login' | 'signup' | 'setPassword';
+type View = 'login' | 'signup';
 
 export function LandingPage() {
   const [currentView, setCurrentView] = useState<View>('login');
-  const [signupEmail, setSignupEmail] = useState('');
-
-  const handleSignupSuccess = (email: string) => {
-    setSignupEmail(email);
-    setCurrentView('setPassword');
-  };
-
-  const handleBackToSignup = () => {
-    setCurrentView('signup');
-  };
 
   return (
     <div className="landing-page">
@@ -32,14 +21,7 @@ export function LandingPage() {
         )}
 
         {currentView === 'signup' && (
-          <Signup
-            onSwitchToLogin={() => setCurrentView('login')}
-            onSignupSuccess={handleSignupSuccess}
-          />
-        )}
-
-        {currentView === 'setPassword' && (
-          <SetPassword email={signupEmail} onBack={handleBackToSignup} />
+          <Signup onSwitchToLogin={() => setCurrentView('login')} />
         )}
       </div>
     </div>

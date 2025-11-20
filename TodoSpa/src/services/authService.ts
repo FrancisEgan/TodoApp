@@ -1,4 +1,4 @@
-import type { LoginRequest, SignupRequest, SetPasswordRequest, LoginResponse } from '../types/auth';
+import type { LoginRequest, SignupRequest, SetPasswordRequest, LoginResponse, VerifyAccountRequest } from '../types/auth';
 
 const API_BASE_URL = 'https://localhost:7275';
 
@@ -21,7 +21,7 @@ export const authService = {
         return data;
     },
 
-    async signup(userData: SignupRequest): Promise<{ message: string; userId: number }> {
+    async signup(userData: SignupRequest): Promise<{ message: string }> {
         const response = await fetch(`${API_BASE_URL}/auth/signup`, {
             method: 'POST',
             headers: {
@@ -33,6 +33,24 @@ export const authService = {
         if (!response.ok) {
             const error = await response.text();
             throw new Error(error || 'Signup failed');
+        }
+
+        const data = await response.json();
+        return data;
+    },
+
+    async verifyAccount(verifyData: VerifyAccountRequest): Promise<LoginResponse> {
+        const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(verifyData),
+        });
+
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error || 'Verification failed');
         }
 
         const data = await response.json();

@@ -23,17 +23,10 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
 
 - .NET 10.0 SDK or later
 - Node.js 18+ (for the frontend)
-- OpenSSL (for generating SSL certificates)
 
 ### Setup
 
-1. Generate SSL certificates for local HTTPS development:
-   ```bash
-   cd TodoSpa
-   openssl req -x509 -newkey rsa:2048 -keyout localhost-key.pem -out localhost.pem -days 365 -nodes -subj "//CN=localhost"
-   ```
-
-2. Install frontend dependencies:
+1. Install frontend dependencies:
    ```bash
    cd TodoSpa
    npm install
@@ -55,8 +48,7 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
 
 3. Access the application:
    - Frontend: `http://localhost:5173`
-   - API Documentation (Scalar UI): `https://localhost:<port>/scalar/v1`
-   - OpenAPI JSON: `https://localhost:<port>/openapi/v1.json`
+   - API Documentation (Scalar UI): `https://localhost:7275/scalar`
 
 **Note:** The frontend runs on HTTP for easier development (HMR works better), while the API runs on HTTPS. The CORS configuration allows this mixed setup.
 

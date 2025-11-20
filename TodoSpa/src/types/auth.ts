@@ -4,9 +4,14 @@ export interface LoginRequest {
 }
 
 export interface SignupRequest {
+    email: string;
+}
+
+export interface VerifyAccountRequest {
+    token: string;
     firstName: string;
     lastName: string;
-    email: string;
+    password: string;
 }
 
 export interface SetPasswordRequest {

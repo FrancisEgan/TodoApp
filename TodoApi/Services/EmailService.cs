@@ -11,14 +11,9 @@ public class EmailService : IEmailService
 
     public Task SendVerificationEmailAsync(string email, string token)
     {
-        var verificationUrl = $"https://localhost:7275/verify?token={token}";
+        var verificationUrl = $"http://localhost:5173/verify?token={token}";
 
-        _logger.LogInformation("===========================================");
-        _logger.LogInformation("EMAIL VERIFICATION FOR: {Email}", email);
-        _logger.LogInformation("Copy and paste this URL into your browser:");
-        _logger.LogInformation("{VerificationUrl}", verificationUrl);
-        _logger.LogInformation("Token: {Token}", token);
-        _logger.LogInformation("===========================================");
+        _logger.LogInformation(verificationUrl);
 
         return Task.CompletedTask;
     }

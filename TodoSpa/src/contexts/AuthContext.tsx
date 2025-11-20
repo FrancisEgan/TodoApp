@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { User, LoginRequest, SignupRequest, SetPasswordRequest } from '../types/auth';
+import type { User, LoginRequest, SignupRequest, SetPasswordRequest, VerifyAccountRequest } from '../types/auth';
 import { authService } from '../services/authService';
 
 interface AuthContextType {
@@ -8,7 +8,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
-  signup: (userData: SignupRequest) => Promise<{ message: string; userId: number }>;
+  signup: (userData: SignupRequest) => Promise<{ message: string }>;
+  verifyAccount: (verifyData: VerifyAccountRequest) => Promise<void>;
   setPassword: (passwordData: SetPasswordRequest) => Promise<void>;
   logout: () => void;
 }
@@ -52,6 +53,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return await authService.signup(userData);
   };
 
+  const verifyAccount = async (verifyData: VerifyAccountRequest) => {
+    const response = await authService.verifyAccount(verifyData);
+    authService.saveToken(response.token);
+    authService.saveUser(response);
+    setUser({
+      userId: response.userId,
+      email: response.email,
+      firstName: response.firstName,
+      lastName: response.lastName,
+    });
+  };
+
   const setPassword = async (passwordData: SetPasswordRequest) => {
     const response = await authService.setPassword(passwordData);
     console.log('SetPassword response:', response);
@@ -80,6 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         login,
         signup,
+        verifyAccount,
         setPassword,
         logout,
       }}

@@ -17,6 +17,9 @@ public static class AuthEndpoints
         auth.MapPost("/signup", Signup)
             .WithName("Signup");
 
+        auth.MapPost("/verify", VerifyAccount)
+            .WithName("VerifyAccount");
+
         auth.MapPost("/set-password", SetPassword)
             .WithName("SetPassword");
 
@@ -35,13 +38,23 @@ public static class AuthEndpoints
         // Validate email format
         if (string.IsNullOrWhiteSpace(request.Email) || !request.Email.Contains('@'))
         {
-            return TypedResults.BadRequest(new AuthResponse("Invalid email address"));
+            // Don't reveal validation failure - return success message
+            return TypedResults.Ok(new AuthResponse("Please check your email inbox to verify your account."));
         }
 
         // Check if user already exists
-        if (await db.Users.AnyAsync(u => u.Email == request.Email))
+        var existingUser = await db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+        if (existingUser != null)
         {
-            return TypedResults.BadRequest(new AuthResponse("Email already registered"));
+            // Don't reveal account exists - return success message
+            // If account already verified, don't send another email
+            if (!existingUser.IsEmailVerified && existingUser.EmailVerificationTokenExpires > DateTime.UtcNow)
+            {
+                // Resend verification email for existing unverified account
+                await emailService.SendVerificationEmailAsync(existingUser.Email, existingUser.EmailVerificationToken!);
+            }
+            return TypedResults.Ok(new AuthResponse("Please check your email inbox to verify your account."));
         }
 
         // Generate verification token
@@ -52,13 +65,13 @@ public static class AuthEndpoints
 
         var user = new User
         {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
+            FirstName = string.Empty, // Will be set during verification
+            LastName = string.Empty, // Will be set during verification
             Email = request.Email,
             EmailVerificationToken = token,
             EmailVerificationTokenExpires = DateTime.UtcNow.AddHours(24),
             IsEmailVerified = false,
-            PasswordHash = string.Empty // Will be set when they verify email
+            PasswordHash = string.Empty // Will be set during verification
         };
 
         db.Users.Add(user);
@@ -67,9 +80,57 @@ public static class AuthEndpoints
         // Send verification email
         await emailService.SendVerificationEmailAsync(user.Email, token);
 
-        return TypedResults.Ok(new AuthResponse(
-            "Verification email sent. Please check your inbox.",
-            user.Id
+        return TypedResults.Ok(new AuthResponse("Please check your email inbox to verify your account."));
+    }
+
+    private static async Task<IResult> VerifyAccount(
+        VerifyAccountRequest request,
+        TodoDb db,
+        PasswordHasher<User> passwordHasher,
+        ITokenService tokenService)
+    {
+        // Find user by token
+        var user = await db.Users.FirstOrDefaultAsync(u =>
+            u.EmailVerificationToken == request.Token &&
+            u.EmailVerificationTokenExpires > DateTime.UtcNow
+        );
+
+        if (user == null)
+        {
+            return TypedResults.BadRequest(new AuthResponse("Invalid or expired verification token"));
+        }
+
+        // Validate inputs
+        if (string.IsNullOrWhiteSpace(request.FirstName) || string.IsNullOrWhiteSpace(request.LastName))
+        {
+            return TypedResults.BadRequest(new AuthResponse("First name and last name are required"));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 8)
+        {
+            return TypedResults.BadRequest(new AuthResponse("Password must be at least 8 characters"));
+        }
+
+        // Update user with complete info
+        user.FirstName = request.FirstName;
+        user.LastName = request.LastName;
+        user.PasswordHash = passwordHasher.HashPassword(user, request.Password);
+        user.IsEmailVerified = true;
+        user.EmailVerificationToken = null;
+        user.EmailVerificationTokenExpires = null;
+        user.LastLoginAt = DateTime.UtcNow;
+
+        await db.SaveChangesAsync();
+
+        // Generate JWT token to automatically log them in
+        var token = tokenService.GenerateToken(user);
+
+        return TypedResults.Ok(new LoginResponse(
+            token,
+            user.Id,
+            user.Email,
+            user.FirstName,
+            user.LastName
         ));
     }
 

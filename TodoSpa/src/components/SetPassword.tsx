@@ -1,19 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import './Auth.css';
 
-interface SetPasswordProps {
-  email: string;
-  onBack: () => void;
+interface VerifyAccountProps {
+  token: string;
 }
 
-export function SetPassword({ email, onBack }: SetPasswordProps) {
-  const { setPassword } = useAuth();
-  const [token, setToken] = useState('');
-  const [password, setPasswordValue] = useState('');
+export function VerifyAccount({ token }: VerifyAccountProps) {
+  const { verifyAccount } = useAuth();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      setError('No verification token provided');
+    }
+  }, [token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,17 +35,17 @@ export function SetPassword({ email, onBack }: SetPasswordProps) {
       return;
     }
 
-    if (!token) {
-      setError('Please enter the verification token');
+    if (!firstName.trim() || !lastName.trim()) {
+      setError('First name and last name are required');
       return;
     }
 
     setIsLoading(true);
 
     try {
-      await setPassword({ token, password });
+      await verifyAccount({ token, firstName: firstName.trim(), lastName: lastName.trim(), password });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to set password');
+      setError(err instanceof Error ? err.message : 'Verification failed');
     } finally {
       setIsLoading(false);
     }
@@ -47,20 +53,29 @@ export function SetPassword({ email, onBack }: SetPasswordProps) {
 
   return (
     <div className="auth-form">
-      <h2>Set Your Password</h2>
-      <p className="info-message">Account created for {email}</p>
-      <p className="info-message">Check the API console for your verification token</p>
+      <h2>Complete Your Account</h2>
+      <p className="info-message">Please provide your details to complete registration</p>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="token">Verification Token</label>
+          <label htmlFor="firstName">First Name</label>
           <input
-            id="token"
+            id="firstName"
             type="text"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             required
             disabled={isLoading}
-            placeholder="Paste token from console"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="lastName">Last Name</label>
+          <input
+            id="lastName"
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+            disabled={isLoading}
           />
         </div>
         <div className="form-group">
@@ -69,7 +84,7 @@ export function SetPassword({ email, onBack }: SetPasswordProps) {
             id="password"
             type="password"
             value={password}
-            onChange={(e) => setPasswordValue(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             required
             disabled={isLoading}
             minLength={8}
@@ -88,13 +103,10 @@ export function SetPassword({ email, onBack }: SetPasswordProps) {
           />
         </div>
         {error && <div className="error-message">{error}</div>}
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Setting password...' : 'Set Password & Login'}
+        <button type="submit" disabled={isLoading || !token}>
+          {isLoading ? 'Creating account...' : 'Complete Registration'}
         </button>
       </form>
-      <button type="button" onClick={onBack} className="link-button">
-        Back to signup
-      </button>
     </div>
   );
 }
