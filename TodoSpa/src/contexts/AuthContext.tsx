@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { User, LoginRequest, SignupRequest, SetPasswordRequest, VerifyAccountRequest } from '../types/auth';
+import type { User, LoginRequest, SignupRequest, VerifyAccountRequest } from '../types/auth';
 import { authService } from '../services/authService';
 
 interface AuthContextType {
@@ -10,7 +10,6 @@ interface AuthContextType {
   login: (credentials: LoginRequest) => Promise<void>;
   signup: (userData: SignupRequest) => Promise<{ message: string }>;
   verifyAccount: (verifyData: VerifyAccountRequest) => Promise<void>;
-  setPassword: (passwordData: SetPasswordRequest) => Promise<void>;
   logout: () => void;
 }
 
@@ -33,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null;
   });
   const isLoading = false;
+  const isAuthenticated = !!user;
 
   const login = async (credentials: LoginRequest) => {
     const response = await authService.login(credentials);
@@ -65,21 +65,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const setPassword = async (passwordData: SetPasswordRequest) => {
-    const response = await authService.setPassword(passwordData);
-    console.log('SetPassword response:', response);
-    authService.saveToken(response.token);
-    authService.saveUser(response);
-    console.log('Token saved:', authService.getToken());
-    console.log('User saved:', authService.getUser());
-    setUser({
-      userId: response.userId,
-      email: response.email,
-      firstName: response.firstName,
-      lastName: response.lastName,
-    });
-  };
-
   const logout = () => {
     authService.logout();
     setUser(null);
@@ -89,12 +74,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: !!user,
+        isAuthenticated,
         isLoading,
         login,
         signup,
         verifyAccount,
-        setPassword,
         logout,
       }}
     >

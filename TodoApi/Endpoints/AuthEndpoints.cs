@@ -20,9 +20,6 @@ public static class AuthEndpoints
         auth.MapPost("/verify", VerifyAccount)
             .WithName("VerifyAccount");
 
-        auth.MapPost("/set-password", SetPassword)
-            .WithName("SetPassword");
-
         auth.MapPost("/login", Login)
             .WithName("Login");
 
@@ -114,50 +111,6 @@ public static class AuthEndpoints
         // Update user with complete info
         user.FirstName = request.FirstName;
         user.LastName = request.LastName;
-        user.PasswordHash = passwordHasher.HashPassword(user, request.Password);
-        user.IsEmailVerified = true;
-        user.EmailVerificationToken = null;
-        user.EmailVerificationTokenExpires = null;
-        user.LastLoginAt = DateTime.UtcNow;
-
-        await db.SaveChangesAsync();
-
-        // Generate JWT token to automatically log them in
-        var token = tokenService.GenerateToken(user);
-
-        return TypedResults.Ok(new LoginResponse(
-            token,
-            user.Id,
-            user.Email,
-            user.FirstName,
-            user.LastName
-        ));
-    }
-
-    private static async Task<IResult> SetPassword(
-        SetPasswordRequest request,
-        TodoDb db,
-        PasswordHasher<User> passwordHasher,
-        ITokenService tokenService)
-    {
-        // Find user by token
-        var user = await db.Users.FirstOrDefaultAsync(u =>
-            u.EmailVerificationToken == request.Token &&
-            u.EmailVerificationTokenExpires > DateTime.UtcNow
-        );
-
-        if (user == null)
-        {
-            return TypedResults.BadRequest(new AuthResponse("Invalid or expired token"));
-        }
-
-        // Validate password
-        if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 8)
-        {
-            return TypedResults.BadRequest(new AuthResponse("Password must be at least 8 characters"));
-        }
-
-        // Hash and set password
         user.PasswordHash = passwordHasher.HashPassword(user, request.Password);
         user.IsEmailVerified = true;
         user.EmailVerificationToken = null;

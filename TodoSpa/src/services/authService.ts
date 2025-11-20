@@ -1,4 +1,4 @@
-import type { LoginRequest, SignupRequest, SetPasswordRequest, LoginResponse, VerifyAccountRequest } from '../types/auth';
+import type { LoginRequest, SignupRequest, LoginResponse, VerifyAccountRequest } from '../types/auth';
 
 const API_BASE_URL = 'https://localhost:7275';
 
@@ -51,24 +51,6 @@ export const authService = {
         if (!response.ok) {
             const error = await response.text();
             throw new Error(error || 'Verification failed');
-        }
-
-        const data = await response.json();
-        return data;
-    },
-
-    async setPassword(passwordData: SetPasswordRequest): Promise<LoginResponse> {
-        const response = await fetch(`${API_BASE_URL}/auth/set-password`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(passwordData),
-        });
-
-        if (!response.ok) {
-            const error = await response.text();
-            throw new Error(error || 'Failed to set password');
         }
 
         const data = await response.json();

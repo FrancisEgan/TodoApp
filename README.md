@@ -59,7 +59,6 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
 ### Authentication
 - `POST /auth/signup` - Create a new user account (sends verification email)
 - `POST /auth/verify` - Verify account with token and set name/password
-- `POST /auth/set-password` - Set password using verification token
 - `POST /auth/login` - Login and receive JWT token
 - `POST /auth/resend-verification` - Resend verification email
 

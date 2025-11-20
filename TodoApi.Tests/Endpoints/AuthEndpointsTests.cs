@@ -232,48 +232,6 @@ public class AuthEndpointsTests : IClassFixture<TodoApiFactory>, IAsyncLifetime
     }
 
     [Fact]
-    public async Task SetPassword_WithValidToken_ShouldSetPasswordAndReturnToken()
-    {
-        // Arrange
-        var verificationToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("+", "-").Replace("/", "_").Replace("=", "");
-
-        using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<TodoDb>();
-        var user = new User
-        {
-            Email = "setpass@example.com",
-            FirstName = "John",
-            LastName = "Doe",
-            PasswordHash = string.Empty,
-            EmailVerificationToken = verificationToken,
-            EmailVerificationTokenExpires = DateTime.UtcNow.AddHours(24),
-            IsEmailVerified = false
-        };
-        db.Users.Add(user);
-        await db.SaveChangesAsync();
-
-        var request = new SetPasswordRequest(verificationToken, "NewPassword123!");
-
-        // Act
-        var response = await _client.PostAsJsonAsync("/auth/set-password", request);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
-        result.Should().NotBeNull();
-        result!.Token.Should().NotBeNullOrEmpty();
-
-        // Verify user was updated
-        using var verifyScope = _factory.Services.CreateScope();
-        var verifyDb = verifyScope.ServiceProvider.GetRequiredService<TodoDb>();
-        var updatedUser = await verifyDb.Users.FirstOrDefaultAsync(u => u.Email == "setpass@example.com");
-        updatedUser.Should().NotBeNull();
-        updatedUser!.IsEmailVerified.Should().BeTrue();
-        updatedUser.PasswordHash.Should().NotBeNullOrEmpty();
-        updatedUser.EmailVerificationToken.Should().BeNull();
-    }
-
-    [Fact]
     public async Task Login_WithValidCredentials_ShouldReturnToken()
     {
         // Arrange
