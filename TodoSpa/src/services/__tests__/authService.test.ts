@@ -4,7 +4,7 @@ import type { LoginRequest, SignupRequest, VerifyAccountRequest } from '../../ty
 
 // Mock fetch globally
 const mockFetch = vi.fn();
-globalThis.fetch = mockFetch as any;
+globalThis.fetch = mockFetch as typeof fetch;
 
 describe('authService', () => {
   beforeEach(() => {
