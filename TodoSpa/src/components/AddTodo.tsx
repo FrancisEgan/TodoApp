@@ -16,11 +16,14 @@ export function AddTodo({ onAdd, onCancel, autoFocus = false }: AddTodoProps) {
     if (autoFocus && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [autoFocus]);
+    if (title === '' && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus, title]);
 
   const handleSave = async () => {
     if (title.trim() === '' || isLoading) {
-      if (onCancel) onCancel();
+      if (title.trim() === '' && onCancel) onCancel();
       return;
     }
 
@@ -37,6 +40,7 @@ export function AddTodo({ onAdd, onCancel, autoFocus = false }: AddTodoProps) {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       handleSave();
     } else if (e.key === 'Escape' && onCancel) {
       onCancel();
@@ -44,7 +48,9 @@ export function AddTodo({ onAdd, onCancel, autoFocus = false }: AddTodoProps) {
   };
 
   const handleBlur = () => {
-    handleSave();
+    if (title.trim() === '') {
+      if (onCancel) onCancel();
+    }
   };
 
   return (

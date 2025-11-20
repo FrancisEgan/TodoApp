@@ -12,7 +12,6 @@ export function TodoDashboard() {
 
   const handleAddTodo = async (title: string) => {
     await createTodo({ title });
-    setShowAddForm(false);
   };
 
   const handleUpdateTodo = async (id: number, title: string, isComplete: boolean) => {
