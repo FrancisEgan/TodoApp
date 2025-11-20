@@ -39,7 +39,8 @@ public static class TodoEndpoints
         var cachedTodos = await cacheService.GetUserTodosAsync(userId);
         if (cachedTodos != null)
         {
-            return TypedResults.Ok(cachedTodos);
+            var cachedResponse = cachedTodos.Select(t => new TodoResponse(t.Id, t.Title!, t.IsComplete, t.CreatedAt));
+            return TypedResults.Ok(cachedResponse);
         }
 
         // If not in cache, get from database
@@ -50,7 +51,8 @@ public static class TodoEndpoints
         // Store in cache
         cacheService.SetUserTodos(userId, todos);
 
-        return TypedResults.Ok(todos);
+        var response = todos.Select(t => new TodoResponse(t.Id, t.Title!, t.IsComplete, t.CreatedAt));
+        return TypedResults.Ok(response);
     }
 
     private static async Task<IResult> GetTodo(int id, ClaimsPrincipal user, TodoDb db, ITodoCacheService cacheService)
@@ -64,7 +66,7 @@ public static class TodoEndpoints
             var cachedTodo = cachedTodos.FirstOrDefault(t => t.Id == id && !t.IsDeleted);
             if (cachedTodo != null)
             {
-                return TypedResults.Ok(cachedTodo);
+                return TypedResults.Ok(new TodoResponse(cachedTodo.Id, cachedTodo.Title!, cachedTodo.IsComplete, cachedTodo.CreatedAt));
             }
         }
 
@@ -84,7 +86,7 @@ public static class TodoEndpoints
             cacheService.AddTodo(userId, todo);
         }
 
-        return TypedResults.Ok(todo);
+        return TypedResults.Ok(new TodoResponse(todo.Id, todo.Title!, todo.IsComplete, todo.CreatedAt));
     }
 
     private static async Task<IResult> CreateTodo(CreateTodoRequest request, ClaimsPrincipal user, TodoDb db, ITodoCacheService cacheService)
@@ -106,7 +108,8 @@ public static class TodoEndpoints
         // Add to cache if user's todos are cached
         cacheService.AddTodo(userId, todo);
 
-        return TypedResults.Created($"/todos/{todo.Id}", todo);
+        var response = new TodoResponse(todo.Id, todo.Title!, todo.IsComplete, todo.CreatedAt);
+        return TypedResults.Created($"/todos/{todo.Id}", response);
     }
 
     private static async Task<IResult> UpdateTodo(int id, UpdateTodoRequest request, ClaimsPrincipal user, TodoDb db, ITodoCacheService cacheService)
@@ -133,7 +136,8 @@ public static class TodoEndpoints
         // Update cache for the owner of the todo
         cacheService.UpdateTodo(userId, todo);
 
-        return TypedResults.NoContent();
+        var response = new TodoResponse(todo.Id, todo.Title!, todo.IsComplete, todo.CreatedAt);
+        return TypedResults.Ok(response);
     }
 
     private static async Task<IResult> DeleteTodo(int id, ClaimsPrincipal user, TodoDb db, ITodoCacheService cacheService)
