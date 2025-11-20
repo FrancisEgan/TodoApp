@@ -80,6 +80,12 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
 - `PUT /todos/{id}` - Update a todo (supports partial updates)
 - `DELETE /todos/{id}` - Delete a todo (soft delete)
 
+## Assumptions
+- Todos can be created, deleted, and edited
+- Users will want to be able to use the app from their mobile device
+- Users should not see each others todos
+- The app is for individual use cases, not team/organizational use
+
 ## Design Decisions
 - App is small with few endpoints, so minimal api is used. If the app was expanded, controllers could be used - potentially with a tool like MediatR.
 - In-memory database is used. Easy for showcasing the app, and nice that it resets when you restart the dev server.
@@ -92,3 +98,23 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
 - The frontend uses a mobile friendly design so it is usable on all devices.
 - The frontend uses sass with css modules for clean, isolated styling.
 - The frontend uses vitest for unit testing.
+
+## Trade offs
+- In memory database - persistent storage would allow us to continue where we left off when re-running the app, but this app is for demo purposes only.
+- No pagination - we could improve the app further with pagination, but we want to keep things simple for now
+- Soft deletes - we preserve the data and could allow for undo operations, but this increases the database size
+- JWT token in localStorage instead of httpOnly - we need to do it this way to run the app locally in HTTP
+- Optimistic UI updates in react query - better UX but we have to rollback if anything goes wrong
+- Minimal API - clean for this small project. Could be expanded to controllers for a larger app
+- Single page application - server side rendering could improve initial load, but it was requested that this app be made in react.
+
+## Extending the app for production and scaling
+- A dedicated database should be used instead of in-memory
+- In-memory cache should be moved to a distributed cache (Redis or similar)
+- An e-mail provider should be hooked up so users can be created properly via email verification
+- Signup via popular providers like Google or Microsoft accounts would improve the user signup flow significantly
+- Further improve JWT functionality by adding refresh tokens
+- Add pagination for todo lists to improve performance
+- The app could be containerized with Docker or similar to facilitate cloud deployment
+- Testing could be expanded to include integration tests
+- Privacy policy and terms of service are a must for a production app
