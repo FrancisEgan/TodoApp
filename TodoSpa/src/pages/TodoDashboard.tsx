@@ -4,7 +4,7 @@ import { todoService } from '../services/todoService';
 import { TodoItem } from '../components/TodoItem';
 import { AddTodo } from '../components/AddTodo';
 import type { Todo } from '../types/todo';
-import './TodoDashboard.css';
+import './TodoDashboard.scss';
 
 export function TodoDashboard() {
   const { user, logout } = useAuth();

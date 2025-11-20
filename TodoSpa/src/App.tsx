@@ -4,7 +4,7 @@ import { useAuth } from './hooks/useAuth';
 import { LandingPage } from './pages/LandingPage';
 import { VerifyPage } from './pages/VerifyPage';
 import { TodoDashboard } from './pages/TodoDashboard';
-import './App.css';
+import './App.scss';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();

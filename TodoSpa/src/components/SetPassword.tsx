@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import './Auth.css';
+import './Auth.scss';
 
 interface VerifyAccountProps {
   token: string;

@@ -8,11 +8,16 @@
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.2s, transform 0.2s;
-}
 
-.todo-item:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transform: translateY(-1px);
+    &:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+    }
+
+    &.completed .todo-title {
+        text-decoration: line-through;
+        color: #999;
+    }
 }
 
 .todo-checkbox {
@@ -29,15 +34,10 @@
     color: #333;
     font-size: 1rem;
     transition: color 0.2s;
-}
 
-.todo-title:hover {
-    color: #4a90e2;
-}
-
-.todo-item.completed .todo-title {
-    text-decoration: line-through;
-    color: #999;
+    &:hover {
+        color: #4a90e2;
+    }
 }
 
 .todo-input-edit {
@@ -63,9 +63,9 @@
     align-items: center;
     justify-content: center;
     line-height: 1;
-}
 
-.todo-delete:hover {
-    background-color: #fee;
-    color: #dc3545;
+    &:hover {
+        background-color: #fee;
+        color: #dc3545;
+    }
 }

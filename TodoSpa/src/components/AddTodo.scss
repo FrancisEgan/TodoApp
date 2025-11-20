@@ -12,14 +12,14 @@
     border-radius: 4px;
     font-size: 1rem;
     transition: border-color 0.2s;
-}
 
-.add-todo-input:focus {
-    outline: none;
-    border-color: #4a90e2;
-}
+    &:focus {
+        outline: none;
+        border-color: #4a90e2;
+    }
 
-.add-todo-input:disabled {
-    background-color: #f5f5f5;
-    cursor: not-allowed;
+    &:disabled {
+        background-color: #f5f5f5;
+        cursor: not-allowed;
+    }
 }

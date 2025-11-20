@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import './AddTodo.css';
+import './AddTodo.scss';
 
 interface AddTodoProps {
   onAdd: (title: string) => Promise<void>;

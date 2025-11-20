@@ -1,6 +1,6 @@
 import { useSearchParams, Navigate } from 'react-router-dom';
 import { VerifyAccount } from '../components/SetPassword';
-import './VerifyPage.css';
+import './VerifyPage.scss';
 
 export function VerifyPage() {
   const [searchParams] = useSearchParams();

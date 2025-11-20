@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Login } from '../components/Login';
 import { Signup } from '../components/Signup';
-import './LandingPage.css';
+import './LandingPage.scss';
 
 type View = 'login' | 'signup';
 
