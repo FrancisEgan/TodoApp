@@ -118,3 +118,4 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
 - The app could be containerized with Docker or similar to facilitate cloud deployment
 - Testing could be expanded to include integration tests
 - Privacy policy and terms of service are a must for a production app
+- The app needs token revocation so that if a user has a stale browser session they are logged out

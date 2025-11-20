@@ -21,7 +21,7 @@ export function Signup({ onSwitchToLogin }: SignupProps) {
       const response = await signup({ email });
       setMessage(response.message);
       setEmail('');
-    } catch (err) {
+    } catch {
       // Even on error, show the same message for security
       setMessage('Please check your email inbox to verify your account.');
     } finally {
