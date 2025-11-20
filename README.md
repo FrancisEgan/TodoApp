@@ -57,15 +57,17 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
 ## API Endpoints
 
 ### Authentication
-- `POST /auth/signup` - Create a new user account
+- `POST /auth/signup` - Create a new user account (sends verification email)
+- `POST /auth/verify` - Verify account with token and set name/password
+- `POST /auth/set-password` - Set password using verification token
 - `POST /auth/login` - Login and receive JWT token
-- `POST /auth/set-password` - Set password for new users
+- `POST /auth/resend-verification` - Resend verification email
 
 ### Todos (Requires Authentication)
 - `GET /todos` - Get all todos for the authenticated user
 - `GET /todos/{id}` - Get a specific todo
 - `POST /todos` - Create a new todo
-- `PUT /todos/{id}` - Update a todo
+- `PUT /todos/{id}` - Update a todo (supports partial updates)
 - `DELETE /todos/{id}` - Delete a todo (soft delete)
 
 
