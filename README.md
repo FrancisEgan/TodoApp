@@ -22,21 +22,40 @@ A secure todo list API built with ASP.NET Core that allows users to manage their
 ### Prerequisites
 
 - .NET 10.0 SDK or later
+- Node.js 18+ (for the frontend)
+- OpenSSL (for generating SSL certificates)
+
+### Setup
+
+1. Generate SSL certificates for local HTTPS development:
+   ```bash
+   cd TodoSpa
+   openssl req -x509 -newkey rsa:2048 -keyout localhost-key.pem -out localhost.pem -days 365 -nodes -subj "//CN=localhost"
+   ```
+
+2. Install frontend dependencies:
+   ```bash
+   cd TodoSpa
+   npm install
+   ```
 
 ### Running the Application
 
-1. Navigate to the API directory:
+1. Start the API:
    ```bash
    cd TodoApi
-   ```
-
-2. Run the application:
-   ```bash
    dotnet run
    ```
 
-3. Access the API documentation:
-   - Scalar UI: `https://localhost:<port>/scalar/v1`
+2. Start the frontend (in a separate terminal):
+   ```bash
+   cd TodoSpa
+   npm run dev
+   ```
+
+3. Access the application:
+   - Frontend: `https://localhost:5173`
+   - API Documentation (Scalar UI): `https://localhost:<port>/scalar/v1`
    - OpenAPI JSON: `https://localhost:<port>/openapi/v1.json`
 
 ## API Endpoints
