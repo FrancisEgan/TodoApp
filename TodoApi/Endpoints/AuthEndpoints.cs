@@ -44,13 +44,9 @@ public static class AuthEndpoints
 
         if (existingUser != null)
         {
+            Console.WriteLine($"Signup attempt for existing email: {request.Email} (Already verified: {existingUser.IsEmailVerified})");
+
             // Don't reveal account exists - return success message
-            // If account already verified, don't send another email
-            if (!existingUser.IsEmailVerified && existingUser.EmailVerificationTokenExpires > DateTime.UtcNow)
-            {
-                // Resend verification email for existing unverified account
-                await emailService.SendVerificationEmailAsync(existingUser.Email, existingUser.EmailVerificationToken!);
-            }
             return TypedResults.Ok(new AuthResponse("Please check your email inbox to verify your account."));
         }
 
@@ -86,15 +82,16 @@ public static class AuthEndpoints
         PasswordHasher<User> passwordHasher,
         ITokenService tokenService)
     {
-        // Find user by token
+        // Find user by token (includes already verified users)
         var user = await db.Users.FirstOrDefaultAsync(u =>
-            u.EmailVerificationToken == request.Token &&
-            u.EmailVerificationTokenExpires > DateTime.UtcNow
-        );
+            u.EmailVerificationToken == request.Token);
 
-        if (user == null)
+        // Don't reveal if account is already verified - return same error message
+        if (user == null || user.IsEmailVerified ||
+            user.EmailVerificationTokenExpires == null ||
+            user.EmailVerificationTokenExpires <= DateTime.UtcNow)
         {
-            return TypedResults.BadRequest(new AuthResponse("Invalid or expired verification token"));
+            return TypedResults.BadRequest(new AuthResponse("Invalid or expired verification token."));
         }
 
         // Validate inputs

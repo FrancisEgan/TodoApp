@@ -1,5 +1,5 @@
 import { useSearchParams, Navigate } from 'react-router-dom';
-import { VerifyAccount } from '../components/SetPassword';
+import { VerifyAccount } from '../components/VerifyAccount';
 import './VerifyPage.scss';
 
 export function VerifyPage() {

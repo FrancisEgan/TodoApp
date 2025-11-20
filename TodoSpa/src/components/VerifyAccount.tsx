@@ -45,7 +45,9 @@ export function VerifyAccount({ token }: VerifyAccountProps) {
     try {
       await verifyAccount({ token, firstName: firstName.trim(), lastName: lastName.trim(), password });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Verification failed');
+      // Extract the message from the error response
+      const errorMessage = err instanceof Error ? err.message : 'Verification failed';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
