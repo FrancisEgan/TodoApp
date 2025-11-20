@@ -39,13 +39,18 @@ public static class TodoEndpoints
         var cachedTodos = await cacheService.GetUserTodosAsync(userId);
         if (cachedTodos != null)
         {
-            var cachedResponse = cachedTodos.Select(t => new TodoResponse(t.Id, t.Title!, t.IsComplete, t.CreatedAt));
+            var cachedResponse = cachedTodos
+                .OrderBy(t => t.IsComplete)
+                .ThenByDescending(t => t.CreatedAt)
+                .Select(t => new TodoResponse(t.Id, t.Title!, t.IsComplete, t.CreatedAt));
             return TypedResults.Ok(cachedResponse);
         }
 
         // If not in cache, get from database
         var todos = await db.Todos
             .Where(t => t.CreatedBy == userId && !t.IsDeleted)
+            .OrderBy(t => t.IsComplete)
+            .ThenByDescending(t => t.CreatedAt)
             .ToListAsync();
 
         // Store in cache

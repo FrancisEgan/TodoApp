@@ -67,7 +67,10 @@ export function useTodos() {
             queryClient.setQueryData(TODOS_QUERY_KEY, context?.previousTodos);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: TODOS_QUERY_KEY });
+            // Delay the refetch slightly to allow CSS transition to complete
+            setTimeout(() => {
+                queryClient.invalidateQueries({ queryKey: TODOS_QUERY_KEY });
+            }, 300);
         },
     });
 
